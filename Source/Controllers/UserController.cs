@@ -24,7 +24,7 @@ namespace TaskAPI.Controllers
             return await _context.Users.Where(p=>p.IsDeleted != true).ToListAsync();
         }
 
-        // GET api/user/3ab4fcbd993f49ce8a21103c713bf47a
+        // GET api/user/sample@mail.com
         [HttpGet("{email}")]
         public async Task<User> Get(string email)
         {

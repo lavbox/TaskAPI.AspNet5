@@ -21,7 +21,7 @@ namespace TaskAPI.Controllers
         [HttpGet("{taskListId}")]
         public async Task<IEnumerable<Models.Task>> GetAll(string taskListId)
         {
-            return await _context.Tasks.Where(p => p.TaskListId == taskListId).ToListAsync();
+            return await _context.Tasks.Where(p => p.TaskListId == taskListId && p.IsDeleted != true).ToListAsync();
         }
 
 
@@ -49,8 +49,11 @@ namespace TaskAPI.Controllers
                 item.Title = request.TaskTitle;
                 _context.Tasks.Add(item);
                 await _context.SaveChangesAsync();
-                Context.Response.StatusCode = 201;
-                return Ok();
+
+                var tasks = await _context.Tasks.Where(i => i.TaskListId == request.TaskListId && i.IsDeleted != true).Select(p=>new { Title = p.Title }).ToListAsync();
+                var getTaskList = await _context.TaskLists.Where(i => i.TaskListId == request.TaskListId).SingleOrDefaultAsync();
+                var user = await _context.Users.Where(u => u.UserId == getTaskList.UserId).SingleOrDefaultAsync();
+                return Json(new {User=user.EmailAddress,Tasks = tasks,TaskList=getTaskList.Title });
             }
         }
         

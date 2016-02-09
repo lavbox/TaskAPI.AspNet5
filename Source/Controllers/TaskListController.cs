@@ -22,7 +22,7 @@ namespace TaskAPI.Controllers
         [HttpGet("{userId}")]
         public async Task<IEnumerable<TaskList>> GetAll(string userId)
         {
-            return await _context.TaskLists.Where(p => p.UserId == userId).ToListAsync();
+            return await _context.TaskLists.Where(p => p.UserId == userId && p.IsDeleted != true).ToListAsync();
         }
 
 
